@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Editar Participante{% endblock %}
+{% block content %}
+<h2>Editar Participante</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label">Nombre</label>
+        <input type="text" name="nombre" class="form-control" value="{{ participante.nombre }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Edad</label>
+        <input type="number" name="edad" class="form-control" value="{{ participante.edad }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Contacto</label>
+        <input type="text" name="contacto" class="form-control" value="{{ participante.contacto }}" required>
+    </div>
+    <button type="submit" class="btn btn-success">Actualizar</button>
+    <a href="{{ url_for('participante_routes.listar_participantes') }}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}
