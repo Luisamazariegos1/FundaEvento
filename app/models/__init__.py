@@ -1,11 +1,4 @@
-from app import db
-from .rol import Rol
-from .usuario import Usuario
-from .evento import Evento
+# app/models/__init__.py
 from .participante import Participante
-from .grupo import Grupo
-from .inscripcion import Inscripcion
-from .asistencia import Asistencia
-from .evidencia import Evidencia
-from .evaluacion import Evaluacion
-from .notificacion import Notificacion
+
+__all__ = ["Participante"]

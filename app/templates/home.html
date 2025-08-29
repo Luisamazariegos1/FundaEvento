@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Inicio · FundaEvento{% endblock %}
+{% block content %}
+<h1 class="mb-4">Bienvenido a FundaEvento</h1>
+<p class="text-muted">Sistema de gestión de eventos y participantes.</p>
+<a href="{{ url_for('participantes.listar') }}" class="btn btn-primary">Ver Participantes</a>
+{% endblock %}

@@ -1,34 +1,39 @@
+# app/__init__.py
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from .config import Config
 
-# Inicializar extensiones
 db = SQLAlchemy()
 migrate = Migrate()
 
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder="templates", static_folder="static")
     app.config.from_object(Config)
 
-    # Inicializar extensiones con la app
+    # Inicializar extensiones
     db.init_app(app)
+
+    # Cargar modelos para que Alembic los vea
+    with app.app_context():
+        from . import models  # app/models/__init__.py
+
     migrate.init_app(app, db)
 
-    # Registrar Blueprints
-    from app.routes.participante_routes import participante_bp
-    from .routes.evento_routes import evento_bp
-    from .routes.inscripcion_routes import inscripcion_bp
-    from .routes.asistencia_routes import asistencia_bp
-    from .routes.evidencia_routes import evidencia_bp
-    from .routes.reporte_routes import reporte_bp
+    # 🔴 IMPORTANTE: registrar blueprints aquí (no arriba)
+    from .routes.participante_routes import participante_bp
+    app.register_blueprint(participante_bp, url_prefix="/api")
 
-    app.register_blueprint(participante_bp, url_prefix="/participantes")
-    app.register_blueprint(evento_bp, url_prefix="/eventos")
-    app.register_blueprint(inscripcion_bp, url_prefix="/inscripciones")
-    app.register_blueprint(asistencia_bp, url_prefix="/asistencia")
-    app.register_blueprint(evidencia_bp, url_prefix="/evidencias")
-    app.register_blueprint(reporte_bp, url_prefix="/reportes")
+    # Ruta de diagnóstico
+    @app.get("/__routes__")
+    def _routes():
+        return "\n".join(sorted(str(r) for r in app.url_map.iter_rules())), 200, {
+            "Content-Type": "text/plain; charset=utf-8"
+        }
+
+    @app.get("/health")
+    def health():
+        return "ok", 200
 
     return app

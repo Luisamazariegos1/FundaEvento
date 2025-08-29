@@ -1,12 +1,15 @@
 from .. import db
+from datetime import datetime
 
 
 class Participante(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(100), nullable=False)
-    edad = db.Column(db.Integer, nullable=False)
-    contacto = db.Column(db.String(100), nullable=False)
-    rol = db.Column(db.String(20), default="niño")  # niño, encargado, admin
+    __tablename__ = "participantes"
 
-    inscripciones = db.relationship(
-        "Inscripcion", backref="participante", lazy=True)
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(120), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    telefono = db.Column(db.String(30))
+    creado_en = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f"<Participante {self.nombre}>"

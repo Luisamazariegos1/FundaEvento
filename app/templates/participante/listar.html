@@ -1,29 +1,18 @@
 {% extends "base.html" %}
-{% block title %}Lista de Participantes{% endblock %}
+{% block title %}Participantes{% endblock %}
 {% block content %}
 <h2>Participantes</h2>
-<a href="{{ url_for('participante_routes.crear_participante') }}" class="btn btn-primary mb-3">Agregar Participante</a>
+<a href="{{ url_for('participantes.crear') }}" class="btn btn-success mb-3">Nuevo Participante</a>
 <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Nombre</th>
-            <th>Edad</th>
-            <th>Contacto</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for p in participantes %}
-        <tr>
-            <td>{{ p.nombre }}</td>
-            <td>{{ p.edad }}</td>
-            <td>{{ p.contacto }}</td>
-            <td>
-                <a href="{{ url_for('participante_routes.editar_participante', id=p.id) }}" class="btn btn-sm btn-warning">Editar</a>
-                <a href="{{ url_for('participante_routes.eliminar_participante', id=p.id) }}" class="btn btn-sm btn-danger">Eliminar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+  <thead>
+    <tr><th>Nombre</th><th>Email</th><th>Teléfono</th></tr>
+  </thead>
+  <tbody>
+    {% for p in items %}
+      <tr><td>{{ p.nombre }}</td><td>{{ p.email }}</td><td>{{ p.telefono }}</td></tr>
+    {% else %}
+      <tr><td colspan="3" class="text-muted">No hay participantes</td></tr>
+    {% endfor %}
+  </tbody>
 </table>
 {% endblock %}

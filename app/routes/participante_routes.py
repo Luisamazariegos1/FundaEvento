@@ -1,60 +1,34 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
-from ..models.participante import Participante
 from .. import db
+# app/routes/participante_routes.py
+from flask import Blueprint, request, jsonify
+from .. import db
+from ..models.participante import Participante
 
-participante_bp = Blueprint(
-    "participante_routes", __name__, template_folder="../templates/participante")
-
-# Listar participantes
+participante_bp = Blueprint("participante_bp", __name__)
 
 
-@participante_bp.route("/")
+@participante_bp.get("/participantes")
 def listar_participantes():
-    participantes = Participante.query.all()
-    return render_template("participante/listar.html", participantes=participantes)
+    items = Participante.query.order_by(Participante.creado_en.desc()).all()
+    return jsonify([
+        {
+            "id": p.id,
+            "nombre": p.nombre,
+            "email": p.email,
+            "telefono": p.telefono,
+            "creado_en": p.creado_en.isoformat() if p.creado_en else None
+        } for p in items
+    ]), 200
 
-# Crear participante
 
-
-@participante_bp.route("/crear", methods=["GET", "POST"])
+@participante_bp.post("/participantes")
 def crear_participante():
-    if request.method == "POST":
-        nombre = request.form["nombre"]
-        edad = request.form["edad"]
-        contacto = request.form["contacto"]
-
-        nuevo = Participante(nombre=nombre, edad=edad, contacto=contacto)
-        db.session.add(nuevo)
-        db.session.commit()
-        flash("Participante creado correctamente", "success")
-        return redirect(url_for("participante_routes.listar_participantes"))
-
-    return render_template("participante/crear.html")
-
-# Editar participante
-
-
-@participante_bp.route("/editar/<int:id>", methods=["GET", "POST"])
-def editar_participante(id):
-    participante = Participante.query.get_or_404(id)
-    if request.method == "POST":
-        participante.nombre = request.form["nombre"]
-        participante.edad = request.form["edad"]
-        participante.contacto = request.form["contacto"]
-
-        db.session.commit()
-        flash("Participante actualizado correctamente", "success")
-        return redirect(url_for("participante_routes.listar_participantes"))
-
-    return render_template("participante/editar.html", participante=participante)
-
-# Eliminar participante
-
-
-@participante_bp.route("/eliminar/<int:id>")
-def eliminar_participante(id):
-    participante = Participante.query.get_or_404(id)
-    db.session.delete(participante)
+    data = request.get_json(force=True)
+    p = Participante(
+        nombre=data.get("nombre"),
+        email=data.get("email"),
+        telefono=data.get("telefono"),
+    )
+    db.session.add(p)
     db.session.commit()
-    flash("Participante eliminado correctamente", "success")
-    return redirect(url_for("participante_routes.listar_participantes"))
+    return jsonify({"id": p.id}), 201
