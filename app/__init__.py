@@ -1,9 +1,5 @@
 from flask import Flask, jsonify, render_template
-from flask_migrate import Migrate
-from .config import Config
-from .models import db
-
-migrate = Migrate()
+# ... tus imports y config actuales ...
 
 
 def create_app():
@@ -11,11 +7,9 @@ def create_app():
     app.config.from_object(Config)
 
     db.init_app(app)
-    migrate.init_app(app, db)
-
-    # Importar modelos (asegura que existen)
     with app.app_context():
         from . import models
+    migrate.init_app(app, db)
 
     # Home simple
     @app.get("/")
